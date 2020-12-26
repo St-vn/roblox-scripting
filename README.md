@@ -370,5 +370,6 @@ end
 PrintWrapper(123, true, 0, nil) -- true, 0, nil, 123
 ```
 ... is considered as a tuple, here is Roblox explaining what a tuple is.
+
 ![](https://cdn.discordapp.com/attachments/781886987366957058/792517515649351711/unknown.png)
-Source : https://developer.roblox.com/en-us/articles/Tuple
+[Source](https://developer.roblox.com/en-us/articles/Tuple)
