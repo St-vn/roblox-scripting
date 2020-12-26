@@ -142,3 +142,148 @@ local name = "Baseplate"
 
 print(workspace[name].Transparency) -- 0
 ```
+
+
+### 3.0 Numeric loop(for loop)
+
+Now that you know how to perform some basic tasks you would need to know how to perform them multiple times as well. In coding you can loop, it repeats a specified task and would end depending on what kind of loop it is. The most simple of them is the for loop, the numeric loop. In coding it is common sense to not repeat yourself which is the reason that using loops would be useful.  Follow the `DRY` principle (Don't repeat yourself).
+```lua
+for i = 1, 10, 1 do -- 1, 10, 1 are called arguments
+    print(i) -- i means the current iteration/loop
+end
+```
+In terms of arguments, the first defines its origin, the 2nd the end point and the last determines by how many iterations does it skip (it is 1 by default).
+```lua
+local baseplate = workspace.Baseplate -- better make a variable for the baseplate since you're gonna be referencing it 10 times
+
+for i = 0, 10 do
+    baseplate.Transparency = i / 10 -- this would be instantaneous obviously because there isn't a delay of any kind
+end
+
+for i = 0, 1, .1 do
+    baseplate.Transparency = i
+    wait(.1) -- note that the minimum wait time is 1/30 seconds
+end
+```
+
+
+### 3.1 Conditions, relational and logical operators
+
+Before you learn about how to use conditional loops you would need to understand how conditions work. Conditions would either return true or false after the series of operations have been made. You would use specific operators to perform conditional operations and such.
+```lua
+print(workspace.Baseplate.Name == "Baseplate") -- true, checks if the baseplate's name is equal to "Baseplate". also Lua is case sensitive ;)
+```
+The one operator above is a relational operator, its opposite ~=, is a relational operator as well.
+```lua
+print(workspace.Baseplate.Name ~= "bruh moment") -- true, Baseplate's name is indeed not equal to bruh moment
+```
+the other ones, are pretty self-explanatory : `>, <, >=, <=`
+Whenever using those operators, a boolean would be returned as the operations' results. You could manipulate those results to get other results by using logical operators aka : `not, or, and`.
+
+`not` negates a bool value, `or` checks if the preceding condition was false and returns the succeeding one. `and` checks for the preceding value and then return the succeeding one regardless of what it is.
+```lua
+print(not true, not false) -- false, true, false, true
+print(false or true, true or false, false or false) -- true, true, false
+print(true and true, false and true, true and false) -- true, false, false
+```
+In Lua, you could also use logical operators to create stuff like default values
+```lua
+print(nil or 1) -- 1, being the default value and nil being what you tried to input.
+```
+This works that way because `nil` is considered as a faulty value by Lua. But it doesn't mean that it is == to false.
+```lua
+print(false == nil) -- false
+print(false == not not nil) -- would negate nil, a faulty value to true and negate it again.
+```
+That works the same with valid values like numbers and strings.
+```lua
+print(not 1) -- false
+print(1 == true) -- false
+print(not not 1 == true) -- true
+```
+This is what I meant by `and` returning the succeeding value
+```lua
+print(true and 123) -- 123
+```
+
+
+### 3.1.5 Precedence
+
+Precedence of operators is worth taking a look at, Source : Lua 5.1 docs.
+
+![](https://cdn.discordapp.com/attachments/781561020018851850/781632597776007178/unknown.png)
+
+
+### 3.2 if statements, elseif and else
+
+Now that you know how conditions work, you're gonna learn how to execute tasks depending on the condition. If statements are used to check conditions and then run the statement in it if the condition was true/valid.
+```lua
+if true then -- the condition is `true` so it would run
+    print("hello there")
+end
+```
+The else statement would only run if all previous conditions were false.
+```lua
+if false then
+    print("lol this wouldn't run")
+else
+    print("hello there")
+end
+```
+You can have as many elseifs as you want. If the former condition was false, it would check if the current is true and run if that's the case.
+```lua
+if false then
+    print("xd")
+elseif true then
+    print("hi")
+else
+    print("when a condition is true and the code has ran, the rest of the chain would break"
+end
+```
+
+
+### 3.3 While loops and repeat until
+
+Since you understand how conditions and if statements work, you're able to understand how `while` loops work. A while loop is a loop that would run indefinitely until the condition is false.
+```lua
+local x = 5
+
+while x < 1 do -- the condition being x < 1
+    x -= 1
+    wait(1)
+end
+
+print(x) -- 0, the loop needs to break before it can reach this part.
+```
+while loops have a counterpart in Lua that is called a `repeat until` loop. The only difference is that the condition is checked at the **end of each iteration** and would **break if the condition is met** unlike the while loop that checks for the **condition to be false at the beginning**.
+```lua
+local x = 2
+
+repeat
+    x += 1
+until x == 10
+
+print(x) -- 10
+```
+Of course this is pretty unnecessary because of numeric loops' existence. There are also keywords that you could use to manipulate loops. One of them being `continue` and the other being `break`. So I've used the word break earlier and that's what i meant.
+```lua
+while true do
+    print("hi") -- you would realize that this would print once and not crash roblox
+    break
+end
+```
+Another example
+```lua
+for i = 1, 10 do
+    if i == 5 then break end -- wont print 5
+    print(i)
+end
+```
+Using continue
+```lua
+for i = 1, 10 do
+    if i == 5 then continue end -- would skip 5 but print the succeeding ones
+    print(i)
+end
+```
+Note that continue is a Luau and not a Lua keyword. These keywords work with loops only.
