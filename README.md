@@ -287,3 +287,88 @@ for i = 1, 10 do
 end
 ```
 Note that continue is a Luau and not a Lua keyword. These keywords work with loops only.
+
+
+### 4.0 Functions
+
+Functions are tasks that can be executed multiple times. They take arguments, process them and return the results. An example is `print`, print is a function that takes arguments and prints it in the output. `wait` is also a function, it `yields` the thread for x amount of time with a minimum wait time of 1/30 seconds.
+```lua
+wait(1)
+print("a") -- a
+```
+To make a function you write the keyword `function`, its name and then the parentheses where it would contain parameters(arguments) that you would input.
+```lua
+function p()
+
+end
+```
+You can also write
+```lua
+p = function()
+
+end
+```
+Except the former is a syntatic sugar version of the latter. This would create a variable that holds a reference to the function. Just like with regular variables, it is better to define it as a local one for the same reasons.
+```lua
+local function yes()
+
+end
+```
+To call a function, you do this
+```lua
+local function PrintWrapper(toPrint) -- parameters
+    print(toPrint)
+end
+
+PrintWrapper(123) -- 123
+```
+A wrapper function is a function in a software library or a computer program whose main purpose is to call another second function.
+
+
+### 4.1 Returning
+
+`return` returns the value at the end of the function and is the last statement within the function, if you try adding statements after it, it would error. An example of a function returning a value would be `math.pow` from the math library.
+```lua
+math.pow(2, 2) -- returns 2 ^ 2, 4
+```
+Of course doing 2 ^ 2 is better than calling a function. Here is a remake of this function in Lua.
+```lua
+local function pow(x, y)
+    return x ^ y
+end
+
+pow(5, 3) -- 125
+```
+Some functions, allow a lot of arguments like `math.max` and `math.min`
+```lua
+print(math.max(1, 5, 6, 9 ^ 2, 25 ^ .5)) -- 81, 9 ^ 2
+print(math.min(-2, 55, 0, .25)) -- -2
+```
+What they return should be self explanatory since I've just show an example of how to use them. Other functions like `math.clamp` need a specific amount of arguments otherwise it would error.
+```lua
+math.clamp(5 + 5, 1, 7) -- returns the x if it's within the min and max, if it isn't then it would return either the min or max.
+math.clamp(2) -- error
+```
+
+
+### 4.2 Parameters and ... in Lua
+
+Parameters work as variables defined by arguments upon a function call. You can also use `...` as a parameter which would remove the need to add extra parameters from the current and the latter ones.
+```lua
+local function PrintWrapper(...)
+    print(...)
+end
+
+PrintWrapper(123, true, 0, nil) -- 123, true, 0, nil
+```
+If you specify the first parameter and use ... afterwards, each parameter after the first would be part of ...
+```lua
+local function PrintWrapper(parameter1, ...)
+    print(..., parameter1)
+end
+
+PrintWrapper(123, true, 0, nil) -- true, 0, nil, 123
+```
+... is considered as a tuple, here is Roblox explaining what a tuple is.
+![](https://cdn.discordapp.com/attachments/781886987366957058/792517515649351711/unknown.png)
+Source : https://developer.roblox.com/en-us/articles/Tuple
