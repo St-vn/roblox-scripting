@@ -446,7 +446,19 @@ local tubl = {}
 tubl[1] = true
 tubl[2] = "hello"
 ```
-
+There is an operator called the length operator which gets a table or string's length
+```lua
+print(#{true, false}) -- 2
+print(#"hello") -- 5
+```
+When calling a function, you can define the first and only parameter as a table by using curly brackets instead of regular ones. This also applies to strings
+```lua
+print(unpack{true, false, 1}) -- true, false, 1
+print[[
+    hi
+    there
+]] -- hi there, this is called a multi-line string
+```
 
 ### 5.1 Packing and unpacking arrays
 
@@ -482,7 +494,7 @@ local dictionary = {
 
 print(key.door, key["door"]) -- opened opened, indexing tables is the same thing as indexing instances which you are already familiar with.
 ```
-To define a dictionary with keys that aren't array indices nor string keys, you would need to wrap them with square brackets like shown with the string earlier.
+To define keys with specific datatypes, you would need to wrap them with square brackets like shown with the string earlier.
 ```lua
 local keyCodes = {
     [Enum.KeyCode.P] = "hi"
@@ -560,7 +572,99 @@ I don't want to get too far into factory iterators and stuff though, those are s
 
 ### 5.4 Table library
 
-The table library is useful because it allows you to manipulate tables even more.
+The table library is useful because it would allow you to have more control over tables. Here are the functions
 
-1. table.create
-    This creates an array with preallocated memory
+1. table.concat
+    This concatenates each element into a string with the option to add a separator.
+    ```lua
+    local tubl = {"hi", true, 1, 5}
+    print(table.concat(tubl, ", ")) -- "hi", true, 1, 5
+    print(table.concat(tubl, ", ", 2, 3)) -- true, 1, you can also specify the starting point(1) within the array and the ending point(#tubl)
+    ```
+
+2. table.create
+    This creates an array with memory preallocated to the specified amount with the option to add a specified value to each index.
+    ```lua
+    local array = table.create(500, "hello")
+
+    table.foreachi(array, print) -- hello(500x), foreachi is an iterator that calls the specified callback each iteration and has the index and the value as parameters, slower than using ipairs though.
+    -- foreach is the dictionary counterpart
+    ```
+
+3. table.insert
+    Would insert a value at the specified index
+    ```lua
+    local tubl = {true}
+    table.insert(tubl, 2, false)
+
+    print(tubl[2]) -- false
+    ```
+    This method is said to be faster though.
+    ```lua
+    local tubl = {true}
+    table.insert(tubl, false) -- instead of using the position as the 2nd arg you would use the value you want to insert, works like stack push
+
+    print(tubl[2]) -- false
+    ```
+    If you inserted it at an existing entry, it would shift the other elements instead of overwriting it like `tubl[i] = v` does.
+    ```lua
+    local tubl = {5, true, {}, "hi"}
+    table.insert(tubl, 2, false) -- instead of using the position as the 2nd arg you would use the value you want to insert, works like stack push
+
+    print(tubl[2], tubl[3], tubl[4]) -- false, true, table : hexadecimal
+    ```
+    ```lua
+    local tubl = {5, true, {}, "hi"}
+    tubl[2] = nil -- instead of using the position as the 2nd arg you would use the value you want to insert, works like stack push
+
+    print(tubl[2], tubl[3], tubl[4]) -- nil, table : hexadecimal, hi
+    ```
+    If you inserted it at an entry where there aren't any former ones, then it would simply place it there.
+    ```lua
+    local tubl = {}
+    table.insert(tubl, 2, true)
+
+    print(tubl[2]) -- true
+    ```
+
+4. table.find
+    This would perform a linear search algorithm(rudimentary iterating) and return the specified value's index if the value was found, if not then it returns nil. You also have the ability to specify a starting point.
+
+5. table.move
+    ![When too lazy to document table.move](https://cdn.discordapp.com/attachments/744073200651993109/792622202250985482/unknown.png)
+
+6. table.remove
+    Clears the specified index position and shift values similarly to table.insert while also returning the removed value. If the index was not specified, then it would act like stack pop
+    ```lua
+    local array = {123, true}
+    print(table.remove(array)) -- true
+    
+    print(array[2]) -- nil
+    ```
+    ```lua
+    local array = {123, true}
+    print(table.remove(array, 1)) -- 123
+    
+    print(array[1]) -- true
+    ```
+    Some people think that table.remove removes the table, if you want to remove it then simple set the table to nil. Assuming that there aren't any other references to it, it would get gc'd.
+
+7. table.sort
+    This function sorts the table using the [quick sort algorithm](https://en.wikipedia.org/wiki/Quicksort). It uses the < operator when the comparator function isn't specified. But when it is, then it would receive the values as parameters and has to return a bool so that quick sort can sort it accordingly.
+    ```lua
+    local tubl = {50, 100, 75, 25, 0}
+
+    table.sort(tubl, function(x, y)
+        return x > y
+    end)
+
+    print(unpack(tubl)) -- 100, 75, 50, 25, 0
+
+    table.sort(tubl)
+
+    print(unpack(tubl)) -- 0, 25, 50, 75, 100
+    ```
+
+Unpack and pack were reviewed earlier so I don't need to review them again.
+
+**Please note that little to no functions of this library works with dictionaries.**
