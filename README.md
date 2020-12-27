@@ -100,6 +100,14 @@ But if you used `typeof` instead, it would print Instance. That is because typeo
 print(typeof(workspace)) -- Instance
 ```
 
+
+### 2.1.5 Roblox datatypes :
+
+So roblox have datatypes of their own that are considered as userdata by Lua. You don't need to worry about userdata. An example would be Vector3 and Instance. Vector3 defines something in 3D space like position, orientation, direction, etc. An instance is what you can see within the explorer, what you can you create with Instance.new() and more. A `Color3` defines something's color and can be created with HSL and RGB while you have a limited amount of colors to pick from when using `BrickColor`. Most datatypes' constructor functions are datatype.new().
+
+[Every Roblox datatype is listed in the API](https://developer.roblox.com/en-us/api-reference/data-types)
+
+
 ### 2.2 Explorer hierarchy
 
 Like you've seen earlier, `game` is at the top of the hierarchy. Direct "descendants" of the DataModel(game) are called "Services", the workspace is an example of a service and so is the Lighting that you see in the Explorer. Here are some services.
@@ -373,3 +381,178 @@ PrintWrapper(123, true, 0, nil) -- true, 0, nil, 123
 
 ![](https://cdn.discordapp.com/attachments/781886987366957058/792517515649351711/unknown.png)
 [Source](https://developer.roblox.com/en-us/articles/Tuple)
+
+
+### 4.3 Events/Signals and connections
+
+Events/signals, are things that happens within the game/engine, it could fire after a task is done, after an input, etc.
+
+What you can do with events is connecting them to a `callback` and then it would call the callback every time it is fired. An example of an event changing a property. A `callback` is essentially a function that you pass as an argument in another function that you can call when specified.
+```lua
+workspace.Baseplate.Changed:Connect(function(property) -- returns a connection
+    -- task
+end)
+```
+Just like regular functions there would be parameters in the callback function except they are automatically passed by the event. When you connect an event, you get a connection. Signals and Connections in roblox are called `RBXScriptSignal` and `RBXScriptConnection`, they're their respective datatypes that inherit their own methods. A connection can be used to disconnect the event via the `Disconnect` method.
+```lua
+local connection = workspace.Baseplate.Changed:Connect(function(property)
+    print(property)
+end)
+
+wait(1) -- wait for seconds to disconnect the function
+connection:Disconnect()
+```
+You can also yield(pause) the current thread by using Signal:Wait(). It would yield until the signal fires.
+```lua
+print(game:GetService("RunService").Heartbeat:Wait()) -- when the event fires it would return the parameters so it would print the deltatime in our case.
+```
+Heartbeat fires every frame and you would learn about RunService later on.
+
+### 5.0 Tables
+
+Tables are a datatype that I've mentioned before in here. They are used to store multiple values in them including other tables. To create a table you would use these brackets {}.
+```lua
+local tubl = {}
+```
+You would have to insert the values inside of the brackets like u would input arguments in a function call.
+```lua
+local tubl = {true, "hello"}
+```
+To access the contents of a table you index it with a number.
+```lua
+local tubl = {true, "hello"}
+
+print(tubl[1]) -- true
+print(tubl[2]) -- hello
+print(tubl[3]) -- nil, undefined
+```
+To define something after the table has been created you'd have to index it as well.
+```lua
+local tubl = {}
+
+print(tubl[1]) -- nil
+
+tubl[1] = 3
+
+print(tubl[1]) -- 3
+```
+Defining the values in a table when creating it is better than after table creations because of Luau optimizations. Therefore
+```lua
+local tubl = {true, "hello"}
+```
+is better than
+```lua
+local tubl = {}
+tubl[1] = true
+tubl[2] = "hello"
+```
+
+
+### 5.1 Packing and unpacking arrays
+
+Arrays are the kinds of tables you've been using so far. You can pack a tuple and get an array with the tuple values as well.
+```lua
+local function pack(...)
+    return {...} -- table.pack already does that and doing {...} is more than enough
+end
+```
+You can do the opposite and unpack arrays as well
+```lua
+local tubl = {5, true, nil, "hello"}
+print(tubl) -- table : hexadecimal address
+print(unpack(tubl)) -- 5, true, nil, hello
+```
+
+
+### 5.2 Arrays and dictionaries
+
+Tables are lists like such as a whole, because arrays and dictionaries are considered as tables in Lua. An array is the kind of table you've created so far, with a numeric index. A dictionary is a table with non numeric keys(indices). Usually those keys would be strings. To define a string dictionary you would do
+```lua
+local dictionary = {
+    key = "door" -- haha funny pun
+}
+
+print(dictionary.key) -- door
+```
+This is also possible
+```lua
+local dictionary = {
+    ["door"] = "opened"
+}
+
+print(key.door, key["door"]) -- opened opened, indexing tables is the same thing as indexing instances which you are already familiar with.
+```
+To define a dictionary with keys that aren't array indices nor string keys, you would need to wrap them with square brackets like shown with the string earlier.
+```lua
+local keyCodes = {
+    [Enum.KeyCode.P] = "hi"
+}
+
+game:GetService("UserInputService").InputBegan:Connect(function(input) -- UIS would be covered later
+    print(keyCodes[input.KeyCode]) -- thats how you index Enum with keys, would print nil for any other kind of input
+end)
+```
+You can do the same with instances except you have to be more careful because it could cause memory leak if not used properly. To avoid memory leak you have to set the value to nil before/after instance destruction that way it can gc(garbage collection). If it has a reference of some sort then it wouldn't be able to gc.
+
+
+### 5.3 Iterating through tables
+
+So tables are great, you can do lots of stuff with them. Too bad you can't loop through them, oh wait you can. You would even utilize the `for` keyword. There are different ways to do so.
+
+One of them is `pairs` it's the most famous one actually. It can be used to loop through any kinds of tables including mixed tables which isn't recommended to use(because it Lua doesn't have a lot of support for it and not to mention the fact that other languages don't support it at all).
+```lua
+local array = {1, true, "ewqwsd"}
+local dictionary = {
+    hello = "world",
+    you = "are fat"
+    invisible = nil
+}
+
+for i, v in pairs(array) do
+    print(i, v) -- i represents the index or key and v represents the value
+end
+
+for k, v in pairs(array) do -- the invisible key would get ignored because it is nil
+    print(k, v) -- the term key is used in dictionaries
+end
+```
+
+Side note : pairs loop through array elements before dictionary ones if it looping through a mixed table.
+
+`ipairs` is used for properly organized arrays only and wouldn't run mixed tables, etc
+```lua
+local array = {1, true, "a", nil, 50} -- nil and 50 wouldnt get printed
+
+for i, v in ipairs(array) do
+    print(i, v)
+end
+```
+`next` is like pairs but slower, pairs uses next internally though. The syntax is a teensy bit different.
+```lua
+local array = {1, true, "ewqwsd"}
+local dictionary = {
+    hello = "world",
+    you = "are fat"
+    invisible = nil
+}
+
+for i, v in next, array do
+    print(i, v)
+end
+
+for k, v in next, dictionary do
+    print(k, v)
+end
+```
+**Note : next is linear while ipairs and pairs aren't, that's because ipairs and pairs have optimizations which make them faster than next**
+
+`next` can also be used to get the next element in a table from a key, hence the name next.
+```lua
+local table = {
+    hello = "world",
+    bruh = "moment"
+}
+
+print(next(table, "hello")) -- bruh moment
+```
+I don't want to get too far into factory iterators and stuff though, those are some more advanced concepts. So that would be enough for iterators for now.
