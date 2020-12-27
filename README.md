@@ -631,6 +631,8 @@ The table library is useful because it would allow you to have more control over
     This would perform a linear search algorithm(rudimentary iterating) and return the specified value's index if the value was found, if not then it returns nil. You also have the ability to specify a starting point.
 
 5. table.move
+    When too lazy to document this function   
+
     ![When too lazy to document table.move](https://cdn.discordapp.com/attachments/744073200651993109/792622202250985482/unknown.png)
 
 6. table.remove
