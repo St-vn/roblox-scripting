@@ -512,7 +512,7 @@ for i, v in pairs(array) do
     print(i, v) -- i represents the index or key and v represents the value
 end
 
-for k, v in pairs(array) do -- the invisible key would get ignored because it is nil
+for k, v in pairs(dictionary) do -- the invisible key would get ignored because it is nil
     print(k, v) -- the term key is used in dictionaries
 end
 ```
@@ -556,3 +556,11 @@ local table = {
 print(next(table, "hello")) -- bruh moment
 ```
 I don't want to get too far into factory iterators and stuff though, those are some more advanced concepts. So that would be enough for iterators for now.
+
+
+### 5.4 Table library
+
+The table library is useful because it allows you to manipulate tables even more.
+
+1. table.create
+    This creates an array with preallocated memory
