@@ -372,10 +372,10 @@ PrintWrapper(123, true, 0, nil) -- 123, true, 0, nil
 If you specify the first parameter and use ... afterwards, each parameter after the first would be part of ...
 ```lua
 local function PrintWrapper(parameter1, ...)
-    print(..., parameter1)
+    print(...)
 end
 
-PrintWrapper(123, true, 0, nil) -- true, 0, nil, 123
+PrintWrapper(123, true, 0, nil) -- 0, nil, 123
 ```
 ... is considered as a tuple, here is Roblox explaining what a tuple is.
 
