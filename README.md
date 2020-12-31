@@ -1,6 +1,16 @@
 # Roblox Scripting
 ## Written by St_vn#3931, St_vnC(Roblox), St-vn(Github)
 
+**Before you start reading, I would like to point out that most info here comes from docs that I've read before and some research.**
+
+[Lua 5.1 docs](https://www.lua.org/manual/5.1/manual.html#1.0)
+
+[Luau docs](https://roblox.github.io/luau/)
+
+[Roblox API](https://developer.roblox.com/en-us/api-reference/)
+
+[Lua source code](https://www.lua.org/source/)
+
 
 ### 1.0 Printing
 
@@ -38,7 +48,7 @@ This would print `hello there`, `..` is called string concatenation which is an 
 
 ### 1.3 Variables
 
-Variables, unlike in algebra are defined by you. You use variables to avoid repeat the same tasks to get the same values..
+Variables, unlike in algebra are defined by you. You use variables to avoid repeat the same tasks to get the same values.
 ```lua
 local variable = "hi"
 print(variable) -- hi
@@ -310,13 +320,19 @@ function p()
 
 end
 ```
-You can also write
+Which is basically a syntactic sugar(better looking) version of
+```lua
+p; p = function()
+
+end
+```
+and not
 ```lua
 p = function()
 
 end
 ```
-Except the former is a syntatic sugar version of the latter. This would create a variable that holds a reference to the function. Just like with regular variables, it is better to define it as a local one for the same reasons.
+Which is the sole reason that you make recursive functions like that. Functions can be local, therefore should be used for the same reasons as local variables. You'd define a local function this way
 ```lua
 local function yes()
 
@@ -333,7 +349,32 @@ PrintWrapper(123) -- 123
 A wrapper function is a function in a software library or a computer program whose main purpose is to call another second function.
 
 
-### 4.1 Returning
+### 4.1 Recursive functions
+
+Recursive functions are functions that call themselves, not that useful in most cases and looping is better. You would find greater uses for it as you get better. This is how a recursive function looks like.
+```lua
+local function Recurse()
+    print("hi")
+
+    Recurse()
+end
+```
+That would cause a stack overflow because that callstack would overflow due to the amount of functions being called within the same thread. As mentioned earlier, you have to do
+```lua
+local func; func = function()
+    print("hi")
+end
+```
+or its popular counterpart to be able to make recursive functions. The reason that you can't use
+```lua
+local func = function()
+
+end
+```
+Is because unlike the former, it doesn't already have a reference of itself to call so it would error(attempt to call nil).
+
+
+### 4.2 Returning
 
 `return` returns the value at the end of the function and is the last statement within the function, if you try adding statements after it, it would error. An example of a function returning a value would be `math.pow` from the math library.
 ```lua
@@ -359,7 +400,7 @@ math.clamp(2) -- error
 ```
 
 
-### 4.2 Parameters and ... in Lua
+### 4.3 Parameters and ... in Lua
 
 Parameters work as variables defined by arguments upon a function call. You can also use `...` as a parameter which would remove the need to add extra parameters from the current and the latter ones.
 ```lua
@@ -383,7 +424,7 @@ PrintWrapper(123, true, 0, nil) -- 0, nil, 123
 [Source](https://developer.roblox.com/en-us/articles/Tuple)
 
 
-### 4.3 Events/Signals and connections
+### 4.4 Events/Signals and connections
 
 Events/signals, are things that happens within the game/engine, it could fire after a task is done, after an input, etc.
 
@@ -670,3 +711,142 @@ The table library is useful because it would allow you to have more control over
 Unpack and pack were reviewed earlier so I don't need to review them again.
 
 **Please note that little to no functions of this library works with dictionaries.**
+
+### 6.0 Player class, local player and the player service
+
+The player class and service provides a lot of functionality for both the client and the server to handle player(s). The player object has info about the player such as their userid, account age, their appearance, etc. The local player can only be accessed from the client(localscript or module required by localscript). So if you can't get the localplayer on the server with a server(regular) script.
+```lua
+-- Client
+print(game.Players.LocalPlayer) -- local player name
+```
+```lua
+-- Server
+print(game.Players.LocalPlayer) -- nil
+```
+The player service provides both server and client sided use. It detects player joining/leaving, can make the localplayer chat, report, etc. Instances have methods such as GetChildren and events like ChildAdded and ChildRemoved. The player service has its own events and methods that are optimized for handling player related tasks like saving data.
+```lua
+local playerService = game.Players
+
+playerService.PlayerRemoving:Connect(function(player)
+    print(player.Parent) -- Players
+end)
+
+playerService.ChildRemoved:Connect(function(player)
+    print(player.Parent) -- nil, playerremoving fires right before the player gets removed from the playerservice in other words, destroyed. You can use that to save data if you're using instances to store data.
+end)
+```
+The player holds a direct reference to its character model located in the workspace which can be useful. Except the character takes some time to load therefore wouldn't exist when the script first executes.
+```lua
+local player = game.Players.LocalPlayer
+local character = player.Character
+
+print(character) -- nil
+```
+So you would need to use `CharacterAdded` event.
+```lua
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+print(character) -- character
+```
+I've explained how a signal's :Wait() method and logical operators work before. If the character is nil, then it would yield the thread until CharacterAdded fires. The :Wait() method returns the event's parameters. This method is much more efficient than busy waiting, any method that revolves around using signals instead of busy waiting is always best. Busy waiting is just a loop that would run only until when the given condition is true, which is a waste of CPU cycles. To learn more about the player service and player class. Here's the API
+[PlayerService](https://developer.roblox.com/en-us/api-reference/class/Players)
+[Player Class](https://developer.roblox.com/en-us/api-reference/class/Player)
+
+
+### 6.1 Server and client
+
+Servers and clients are network stuff. The server being Roblox's servers and client being the user. The time it takes for the server and client to communicate is called the client's ping. This varies with the user's wifi speed and their distance between the server, a European playing in an Asian server would lead to larger pings due to the distance. Inputs like pressing a key, clicking a mouse button, etc are handled within the client. While handling databases would be server sided.
+
+In Roblox, clients are marked as blue while the server is green. While play testing you can switch between the client and server by clicking on the upper half of the screen.
+
+![](https://cdn.discordapp.com/attachments/730438914401370112/794301299189350441/unknown.png)
+
+If you changed something from the client, generally it wont replicate to the server(or to other clients) but something that happens to the server would replicate to the clients. To make changes on the server while being on the client, you would use remotes. Remotes are the only communication method between clients and servers we have here on Roblox.
+
+
+### 6.1.5 RemoteEvent and RemoteFunction
+
+Those were the remotes I was referring to last chapter. You send data to where you want and let the other side handle it. Let's start with RemoteEvents. RemoteEvents are used a lot more than their function counterpart because they're signal based and wont yield the caller's thread. They use the term fire in their methods.
+```lua
+-- Client
+local remote = pathToRemote
+
+remote:FireServer(math.random(5)) -- FireServer cannot be called on the server and vice-versa meaning that this code is client-sided
+remote:FireClient(game.Players.LocalPlayer) -- error
+```
+```lua
+-- Server
+local remote = pathToRemote
+
+remote.OnServerEvent:Connect(function(player, number) -- the client who fired the server would always be the first parameter, if you sent the player as an argument then it would be the second parameter and would cause problem in your code.
+    print(player) -- client name
+    print(number) -- an integer between 0 and 5
+end)
+
+remote:FireServer() -- error
+```
+It is a good idea to send data through remotes to perform tasks with more efficiency instead of using a hacky solution. You can do the same with the server and fire clients.
+```lua
+-- Server
+
+local remote = pathToRemote
+
+remote:FireAllClients(true) -- You can fire every client with this function instead of looping through them individually
+
+for _, player in ipairs(game.Players:GetPlayers()) do
+    remote:FireClient("hi") -- You can loop through a specific group of players instead of firing clients for specific reasons
+end
+```
+```lua
+-- Client
+
+remote.OnClientEvent:Connect(function(parameter)
+    print(parameter) -- true, hi
+end)
+```
+You would use RemoteFunctions because you expect them to return something after it's done playing with the data you sent. RemoteFunctions unlike RemoteEvents, use the `Invoke` term instead of `Fire` because it is the term used with functions. This piece of code should give you an idea about how RemoteFunctions work.
+```lua
+-- Client
+
+local remote = pathToRemote
+
+remote.OnClientInvoke = function(bool)
+    return not bool
+end
+
+print(remote:InvokeServer()) -- false
+```
+```lua
+-- Server
+
+local remote = pathToRemote
+
+remote.OnServerInvoke = function(player) -- the client is still the first parameter
+    return remote:InvokeClient(player, true)
+end
+```
+You can try returning values using RemoteEvents, it wont work. I don't find a lot of uses for RemoteFunctions since I don't need to yield my threads nor need a returned value. Some people InvokeServers for sanity checks from the server to "prevent exploiters" from ruining the game. That's a horrible idea because exploiters have 100% control of the client and can ruin part of the server depending on how the devs setup the remotes and the code. If you're doing server sided tasks and invoking clients to expect a value then exploiters could disrupt those as well.
+
+
+### 6.2 Network Ownership
+
+Network Ownership is something that parts have. It is used to prevent input delays and such, an example would be when a player pushes a part. There wouldn't be delay because the player has network ownership over that part. Unanchored parts' network owner can change and needs to be in a player's range to be have that player as their network owner. That range varies a lot. Yes, network owners can only be set on unanchored parts. When a client has network ownership over a part, any physical changes on their side would replicate to the server. That also means that exploiters can destroy part based hitboxes. To prevent that you could manually set a part's network owner to nil(server).
+```lua
+Part:SetNetworkOwner(nil)
+```
+You can manually set a parts' network owner to a player if they're not within the range.
+```lua
+if not Part:GetNetworkOwner() then -- sadge encapsulation :(
+    Part:SetNetworkOwner(player)
+end
+```
+
+
+### 6.3 Exploiters, Honeypots and securing your game
+
+Exploiters, dependending on their competency and the anti-cheat's level, can get stopped easily by rudimentary sanity checks or can completely obliterate a game with ineffective anti-cheat like arsenal. You can easily break a simulator made by an incompetent scripter, just spam fire remotes that would likely increment the main currency and get stacked. To prevent that you could check the time elapsed since the previous click hence sanity checks.
+
+Since exploiters have **full control** of their client, they would try to find something to cause chaos within a game. Since client sided changes almost never change you wont have to worry about how a client's UI looks like, that is their problem. So you should just prevent anything that could potentially become a nuisance to other players' fun like gaining infinite amounts of currency or aimbots.
+
+To prevent currency giving remotes from getting spammed, you just don't use them, try using stuff like tools and detect the clicks from the server side and add a fake remote to perhaps punish the exploiter which is what a **honeypot** is. To prevent aimbots that shoot across walls, you could fire server sided rays to make sure that it isn't shooting across walls, of course this would be less effective in an open field therefore you should perhaps add a **cooldown** to see if they're firing too fast. For movement, there would be a problem being that a player could randomly get flung because of glitches and punishing someone over an **unintentional glitch** isn't very ideal either. So instead, you could **rubberband** the player to their previous location if they move too far.
