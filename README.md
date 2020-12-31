@@ -200,7 +200,7 @@ Whenever using those operators, a boolean would be returned as the operations' r
 
 `not` negates a bool value, `or` checks if the preceding condition was false and returns the succeeding one. `and` checks for the preceding value and then return the succeeding one regardless of what it is.
 ```lua
-print(not true, not false) -- false, true, false, true
+print(not true, not false)
 print(false or true, true or false, false or false) -- true, true, false
 print(true and true, false and true, true and false) -- true, false, false
 ```
