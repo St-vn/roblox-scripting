@@ -850,3 +850,8 @@ Exploiters, dependending on their competency and the anti-cheat's level, can get
 Since exploiters have **full control** of their client, they would try to find something to cause chaos within a game. Since client sided changes almost never change you wont have to worry about how a client's UI looks like, that is their problem. So you should just prevent anything that could potentially become a nuisance to other players' fun like gaining infinite amounts of currency or aimbots.
 
 To prevent currency giving remotes from getting spammed, you just don't use them, try using stuff like tools and detect the clicks from the server side and add a fake remote to perhaps punish the exploiter which is what a **honeypot** is. To prevent aimbots that shoot across walls, you could fire server sided rays to make sure that it isn't shooting across walls, of course this would be less effective in an open field therefore you should perhaps add a **cooldown** to see if they're firing too fast. For movement, there would be a problem being that a player could randomly get flung because of glitches and punishing someone over an **unintentional glitch** isn't very ideal either. So instead, you could **rubberband** the player to their previous location if they move too far.
+
+**However it's important to note that stopping competent exploiters is unbelievably harder than stopping skids(script kiddie).**
+
+
+### 6.4 Handling inputs with UserInputService, ContextActionService and the PlayerMouse
