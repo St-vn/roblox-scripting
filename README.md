@@ -46,6 +46,22 @@ print("hello".. " there")
 This would print `hello there`, `..` is called string concatenation which is an operation just like `+`.
 
 
+### 1.2 Operators and operands
+
+Operations take an operator and operands to process its results. I will only review arithmethic ones because others won't do much for now.
+
++ adds y to x, - subtracts y from x, * multiplies y by x, / divides y by x, ^ gets x power y, % gets the remainders of a division operation
+
+2 + 1 = 3
+3 - 1 = 2
+4 * 6 = 24
+5 / 2 = 2.5
+6 ^ 2 = 36
+36 % 5 = 1
+
+Operands are the operation
+
+
 ### 1.3 Variables
 
 Variables, unlike in algebra are defined by you. You use variables to avoid repeat the same tasks to get the same values.
@@ -854,4 +870,118 @@ To prevent currency giving remotes from getting spammed, you just don't use them
 **However it's important to note that stopping competent exploiters is unbelievably harder than stopping skids(script kiddie).**
 
 
-### 6.4 Handling inputs with UserInputService, ContextActionService and the PlayerMouse
+### 6.4 Handling inputs with UserInputService, ContextActionService and the Mouse object
+
+User inputs can range from key presses to screen touching. You would want to use services like UserInputService to create "keybinds" for your game. Note that user inputs only work on clients, not the server. I'll go through the old way to do stuff, the mouse object.
+
+The mouse is the only fashioned way to handle inputs, also called `PlayerMouse`. `Mouse` doesn't support cross platform as much as the services that superseded it which is a reason for the mouse's supersedence. To get a player's mouse you use the GetMouse method that the player has or you can get it through tools' Equipped event.
+```lua
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+
+print(mouse.X) --  the mouse's horizontal position
+```
+```lua
+tool.Equipped:Connect(function(mouse)
+    print(mouse.X)
+end)
+```
+The mouse does still have some functionality that UIS and CAS don't have like getting its position in 3D space, however you can recreate all this functionality if you'd like to use the services and accept a little challenge. You can't change the mouse's icon with UIS nor CAS though. To detect a mouse click you use the Button1Down event.
+```lua
+mouse.Button1Down:Connect(function()
+    print(1)
+end)
+```
+Although you KeyDown and Up are deprecated they're still usable.
+```lua
+mouse.KeyDown:Connect(function(key)
+    print(key)
+end)
+```
+
+**UserInputService** has more uses than simply detecting inputs which is super useful. It can tell whether you have a touch screen or not, whether you're using a controller or not, etc. To detect inputs, you use the InputBegan event.
+```lua
+local inputService = game:GetService("UserInputService") -- you can choose whatever naming convention you want, mine is influenced by my friend's
+
+inputService.InputBegan:Connect(function(input, gpe) -- gpe means gameprocessedevent which is a bool that determines if you're interacting with UI or not whether it's you typing or you clicking on a button
+    if input.KeyCode == Enum.KeyCode.T then
+        -- blah
+    elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
+        -- blah
+    end
+end)
+```
+It's better to use elseifs than connecting multiple functions to detect different inputs. There is InputChanged to detect changes like when the mouse is still moving because InputBegan only detects the input beginning.
+```lua
+local inputService = game:GetService("UserInputService") -- you can choose whatever naming convention you want, mine is influenced by my friend's
+
+inputService.InputBegan:Connect(function(input, gpe)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        print("hi")
+    end
+end)
+
+inputService.InputChanged:Connect(function(input, gpe)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        print("bye")
+    end
+end)
+```
+`hi` would print when you start moving your mouse while `bye` would print every time you move your mouse. InputEnded shouldn't need an explanation on how it works, here's how it works in comparison with InputBegan
+```lua
+local inputService = game:GetService("UserInputService") -- you can choose whatever naming convention you want, mine is influenced by my friend's
+
+inputService.InputBegan:Connect(function(input, gpe)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        print("hi")
+    end
+end)
+
+inputService.InputEnded:Connect(function(input, gpe)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        print("bye")
+    end
+end)
+```
+GuiObjects also inherit these input events, I will talk about UI next chapter.
+```lua
+frame.InputBegan:Connect(function(input, gpe)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        print("hello")
+    end
+end)
+```
+Everything else about this service is within the API and would include events that detect specific inputs, functions that can retrieve the mouse's position, etc. They'll be links to the API that talk about what you learned this chapter.
+
+**ContextActionService** is better than UIS in terms of detecting inputs in general. UIS's input functions would fire upon any input unlike CAS that would only call the callback upon the correct input(s). It does have a bit more functionality than that but most of them are extraneous to the creation of keybinds. To bind to an input you use the `BindAction` function. `BindAction` would overwrite another bound action with the same input you can also bind an action with a certain priority with the function `BindActionAtPriority`. `UnbindAction` does what you expect it to do. With CAS you can also have buttons bound to the action that you can even customize. However I'll just teach the 3 basic functions that it provides.
+```lua
+local actionService = game:GetService("ContextActionService")
+
+actionService:BindAction("hi", function(actionName, state, input) -- state is an enum called UserInputState and the input is an input object
+    if state == Enum.UserInputState.Begin then
+        print("hi, fat person")
+    end
+end, false, Enum.KeyCode.T, Enum.UserInputType.MouseButton3) -- arguments are the action's name, the callback, adds a button and the input(s) bound to the action
+
+actionService:BindActionAtPriority("bruh", function(actionName, state, input) -- state is an enum called UserInputState and the input is an input object
+    if state == Enum.UserInputState.Begin then
+        print("steven writes pog docs")
+    end
+end, false, 2, Enum.KeyCode.L) -- the argument related to the priority is the integer `2`
+
+actionService:UnbindAction("hi") -- unbinds an action from its name
+```
+More functionality in the API, API links :
+
+[Mouse](https://developer.roblox.com/en-us/api-reference/class/PlayerMouse)
+
+[UIS](https://developer.roblox.com/en-us/api-reference/class/UserInputService)
+
+[Input Object](https://developer.roblox.com/en-us/api-reference/class/InputObject)
+
+[CAS](https://developer.roblox.com/en-us/api-reference/class/ContextActionService)
+
+
+### 6.5 Gui
+
+Waiting to be documented
