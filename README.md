@@ -52,14 +52,14 @@ Operations take an operator and operands to process its results. I will only rev
 
 + adds y to x, - subtracts y from x, * multiplies y by x, / divides y by x, ^ gets x power y, % gets the remainders of a division operation
 
-2 + 1 = 3
-3 - 1 = 2
-4 * 6 = 24
-5 / 2 = 2.5
-6 ^ 2 = 36
+2 + 1 = 3,
+3 - 1 = 2,
+4 * 6 = 24,
+5 / 2 = 2.5,
+6 ^ 2 = 36,
 36 % 5 = 1
 
-Operands are the operation
+Operands are the "arguments" that the operator performs an operation on, 0 * 5's operands are 0 and 5 while * is the operator.
 
 
 ### 1.3 Variables
