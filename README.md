@@ -187,7 +187,7 @@ print(workspace[name].Transparency) -- 0
 `name` is a field as well as Transparency.
 
 
-### 3.0 Numeric loop(for loop)
+### 3.0 Numeric loop
 
 Now that you know how to perform some basic tasks you would need to know how to perform them multiple times as well. In coding you can loop, it repeats a specified task and would end depending on what kind of loop it is. The most simple of them is the for loop, the numeric loop. In coding it is common sense to not repeat yourself which is the reason that using loops would be useful.  Follow the `DRY` principle (Don't repeat yourself).
 ```lua
