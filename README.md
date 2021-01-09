@@ -51,7 +51,12 @@ This would print `hello there`, `..` is called string concatenation which is an 
 
 Operations take an operator and operands to process its results. I will only review arithmethic ones because others won't do much for now.
 
-+ adds y to x, - subtracts y from x, * multiplies y by x, / divides y by x, ^ gets x power y, % gets the remainders of a division operation
+* `+` adds `y` to `x`
+* `-` subtracts `y` from `x`, 
+* `*` multiplies `y` by `x`
+* `/` divides `y` by `x`
+* `^` gets `x` power `y`
+* `%` gets the remainders of a division operation
 
 2 + 1 = 3,
 3 - 1 = 2,
