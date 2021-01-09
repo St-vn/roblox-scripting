@@ -291,7 +291,7 @@ Since you understand how conditions and if statements work, you're able to under
 ```lua
 local x = 5
 
-while x < 1 do -- the condition being x < 1
+while x >= 1 do -- the condition being x < 1
     x -= 1
     wait(1)
 end
