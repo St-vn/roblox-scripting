@@ -470,7 +470,7 @@ Heartbeat fires every frame and you would learn about RunService later on.
 
 ### 5.0 Tables
 
-Tables are a datatype that I've mentioned before in here. They are used to store multiple values in them including other tables. To create a table you would use these brackets {}.
+Tables are a datatype that I've mentioned before in here. They are used to store multiple values in them including other tables. They are pretty different compared to datatypes like numbers, bools, etc. The reason being is that they exist as objects in memory which is the reason that they have a hexedecimal address to differenciate them, I will elaborate later in this chapter. To create a table you would use these brackets {}.
 ```lua
 local tubl = {}
 ```
@@ -506,6 +506,38 @@ local tubl = {}
 tubl[1] = true
 tubl[2] = "hello"
 ```
+![](https://cdn.discordapp.com/attachments/781886987366957058/797339910650200064/unknown.png)
+
+[actual sauce](https://roblox.github.io/luau/performance.html)
+
+As I said at the beginning of this chapter, tables are their own individual objects in memory, meaning if you have multiple references to a table and made a change to one of them, it would apply those changes to all the other ones.
+```lua
+local tubl = {}
+local tabl = tubl
+
+print(tubl, tabl) -- same hexadecimal address
+print(tubl.Hi, tabl.Hi) -- nil
+
+tabl.Hi = "hi"
+print(tubl.Hi, tabl.Hi) -- hi
+```
+But this wont apply to values like numbers and strings.
+```lua
+local x = 1
+local y = x
+
+y += 1
+
+print(x, y) -- 1, 2
+```
+```lua
+local str = "you're"
+local second = str
+
+str ..= " fat"
+print(str, second) -- you're fat, you're
+```
+
 There is an operator called the length operator which gets a table or string's length
 ```lua
 print(#{true, false}) -- 2
@@ -616,7 +648,7 @@ for k, v in next, dictionary do
     print(k, v)
 end
 ```
-**Note : next is linear while ipairs and pairs aren't, that's because ipairs and pairs have optimizations which make them faster than next**
+**Note : next's speed is linear while ipairs and pairs aren't, that's because ipairs and pairs have "optimizations" based on their arguments which make them faster than next. Also because next only goes to the next value in a table, nothing else.**
 
 `next` can also be used to get the next element in a table from a key, hence the name next.
 ```lua
@@ -726,6 +758,7 @@ The table library is useful because it would allow you to have more control over
 
     print(unpack(tubl)) -- 0, 25, 50, 75, 100
     ```
+    [table.sort uses quicksort](http://lua-users.org/wiki/LuaSorting) the proof is in the first paragraph through this link.
 
 Unpack and pack were reviewed earlier so I don't need to review them again.
 
@@ -769,6 +802,7 @@ local character = player.Character or player.CharacterAdded:Wait()
 print(character) -- character
 ```
 I've explained how a signal's :Wait() method and logical operators work before. If the character is nil, then it would yield the thread until CharacterAdded fires. The :Wait() method returns the event's parameters. This method is much more efficient than busy waiting, any method that revolves around using signals instead of busy waiting is always best. Busy waiting is just a loop that would run only until when the given condition is true, which is a waste of CPU cycles. To learn more about the player service and player class. Here's the API
+
 [PlayerService](https://developer.roblox.com/en-us/api-reference/class/Players)
 [Player Class](https://developer.roblox.com/en-us/api-reference/class/Player)
 
@@ -1005,9 +1039,16 @@ Guis are 2D interface. They are mainly interacted with mouse related inputs. You
 
     Literally just the UI that plugins have that you interact with.
 
-**GuiObjects** are the objects that get rendered onto your screen. An example would be a Frame. You insert a frame in a ScreenGui that is parented to the StarterGui in **editing mode** and you will see a 100x100 white square on your screen. The StarterGui replicates its contents to a player's PlayerGui when their character loads via CharacterAdded. You can look at GuiObjects yourself since the way you use them is pretty simple excluding `ViewportFrames`, I'll likely cover them eventually or just link the API.
+**GuiObjects** are the objects that get rendered onto your screen. An example would be a Frame. You insert a frame in a ScreenGui that is parented to the StarterGui in **editing mode** and you will see a 100x100 white square on your screen. The StarterGui replicates its contents to a player's PlayerGui when their character loads via CharacterAdded. You can look at GuiObjects yourself since the way you use them is pretty simple excluding `ViewportFrames`, I'll likely cover them eventually or just link the API. As mentioned in the previous chapter, they also inherited UIS related events like InputBegan.
 
 There are **UIComponents** that **change GuiObjects' behaviors and/or properties.** When a property is overwritten by one of those, rewriting it wont do anything. An example would be UICorner, it rounds a UI. Its `CornerRadius` property is a UDim meaning that it has a scale and offset value in it. It will render GuiObjects' border related properties useless since there wont be any and you wont be able to do anything.
 
+[LayerCollector](https://developer.roblox.com/en-us/api-reference/class/LayerCollector)
+
+[GuiObject](https://developer.roblox.com/en-us/api-reference/class/GuiObject)
+
+[UICorner](https://developer.roblox.com/en-us/api-reference/class/UICorner)
 
 ### 7.0 Modules
+
+Waiting to be documented
