@@ -151,6 +151,8 @@ part.Parent = workspace
 ```
 The code above creates a 1 x 1 x 1 part that is parented to the workspace.
 
+[sauce about the parent argument being bad](https://devforum.roblox.com/t/psa-dont-use-instance-new-with-parent-argument/30296)
+
 
 ### 2.4 Services
 
@@ -170,12 +172,13 @@ You would need to index like this
 ```lua
 print(workspace["Baseplate"].Size) -- some Vector3 value
 ```
-Whatever is between those square brackets would be what you'll be indexing with e.g. a reference to a variable.
+The `field` is what you're indexing with, thus
 ```lua
 local name = "Baseplate"
 
 print(workspace[name].Transparency) -- 0
 ```
+`name` is a field as well as Transparency.
 
 
 ### 3.0 Numeric loop(for loop)
@@ -984,4 +987,27 @@ More functionality in the API, API links :
 
 ### 6.5 Gui
 
-Waiting to be documented
+Guis are 2D interface. They are mainly interacted with mouse related inputs. You should already know what Guis are, I wont review everything but just go through general classes and such. There are 4 LayerCollectors, they're the GuiObjects' containers and render them. They are ScreenGui, SurfaceGui, BillboardGui and PluginGui.
+
+* ScreenGui
+
+    ScreenGuis are the most used LayerCollector in general. They are the ones that you see on your screen and are usually parented to the StarterGui by default. It has a property IgnoreGUInset that ignores the CoreUI like the topbar so it wont get lowered because of it.
+
+* SurfaceGui
+
+    SurfaceGuis can only be descendants of BaseParts for them to render. They would render on the given surface, front by default.
+
+* BillboardGui
+
+    Billboards are UI that render on your screen but in "3D" space, it needs an adornee or a BasePart parent for it to stick to something.
+
+* PluginGui
+
+    Literally just the UI that plugins have that you interact with.
+
+**GuiObjects** are the objects that get rendered onto your screen. An example would be a Frame. You insert a frame in a ScreenGui that is parented to the StarterGui in **editing mode** and you will see a 100x100 white square on your screen. The StarterGui replicates its contents to a player's PlayerGui when their character loads via CharacterAdded. You can look at GuiObjects yourself since the way you use them is pretty simple excluding `ViewportFrames`, I'll likely cover them eventually or just link the API.
+
+There are **UIComponents** that **change GuiObjects' behaviors and/or properties.** When a property is overwritten by one of those, rewriting it wont do anything. An example would be UICorner, it rounds a UI. Its `CornerRadius` property is a UDim meaning that it has a scale and offset value in it. It will render GuiObjects' border related properties useless since there wont be any and you wont be able to do anything.
+
+
+### 7.0 Modules
