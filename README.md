@@ -220,7 +220,7 @@ The one operator above is a relational operator, its opposite ~=, is a relationa
 ```lua
 print(workspace.Baseplate.Name ~= "bruh moment") -- true, Baseplate's name is indeed not equal to bruh moment
 ```
-the other ones, are pretty self-explanatory : `>, <, >=, <=`
+the other ones, are pretty self-explanatory : `>, <, >=, <=`, >= being is greater than or equal to.
 Whenever using those operators, a boolean would be returned as the operations' results. You could manipulate those results to get other results by using logical operators aka : `not, or, and`.
 
 `not` negates a bool value, `or` checks if the preceding condition was false and returns the succeeding one. `and` checks for the preceding value and then return the succeeding one regardless of what it is.
