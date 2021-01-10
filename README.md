@@ -1,7 +1,7 @@
 # Roblox Scripting
 ## Written by St_vn#3931, St_vnC(Roblox), St-vn(Github)
 
-**Before you start reading, I would like to point out that most info here comes from docs that I've read before and some research.**
+**Before you start reading, I would like to point out that most info here comes from docs that I've read before and some research. You should also note that the sources below have more in-depth explanation than these docs do, mine are just here to make you grasp Luau.**
 **I also apologize in advance if my wording is wrong, I'm just stupid. ¯\\_(ツ)_/¯**
 
 [Lua 5.1 docs](https://www.lua.org/manual/5.1/manual.html#1.0)
