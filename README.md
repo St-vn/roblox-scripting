@@ -1055,6 +1055,62 @@ There are **UIComponents** that **change GuiObjects' behaviors and/or properties
 
 [UICorner](https://developer.roblox.com/en-us/api-reference/class/UICorner)
 
+
+### 7.0 Coroutine
+
+`coroutine` is a library in Lua that is used to perform tasks with coroutines from regular Lua functions. It is useful because you can now do tasks in another (pseudo) thread without having the need to create a new script which is more expensive. RBXScriptSignals use them internally. When you create a new connection, it creates a new coroutine that will call the callback within it.
+
+There are 2 ways to create coroutines, one is to use the create function, to resume a created coroutine you would use the resume function that the coroutine library provides.
+```lua
+local co = coroutine.create(print) -- returns a thread
+
+coroutine.resume(co, "hi") -- hi, you can pass arguments when resuming a coroutine after putting the coroutine first.
+```
+```lua
+coroutine.resume(coroutine.create(function()
+    wait(1)
+    print("hi")
+end))
+
+print("bruh") -- bruh, will print first since it has to wait for second before printing hi
+```
+The second method to create coroutines is by wrapping the callback. It returns a function instead of a coroutine and upon calling it, it resumes the thread
+```lua
+local wrapped = coroutine.wrap(print) -- returns a wrapped function instead of a thread
+wrapped(1) -- 1
+```
+```lua
+coroutine.wrap(function(...)
+    wait(1)
+    print(...)
+end)(123, true, "false") -- will print 1 second after bruh does
+
+print("bruh")
+```
+The difference between those 2 is that one creates a coroutine and then resumes it which is more expensive than wrapping a function and calling it afterwards. `resume` can be faster than `wrap` when creating multiple a lot of coroutines which is an irrational case. Another difference is that `resume` returns a bool that determines whether it was a success or not(didn't error) and returns the results(what you returned in the coroutine) afterwards(the error if there is one).
+
+Coroutines have *states* as well. When they're `dead`, they can no longer be called. You can get a coroutine's state via `coroutine.status` which returns a string defining their status. Lua 5.4 also has a coroutine.close function, sadly Luau is mainly revolved around 5.1 and has some 5.3 features.
+
+![](https://cdn.discordapp.com/attachments/451820214187720716/797704172677365760/unknown.png)
+`coroutine.running` returns the current thread that running was called from that can be resumed when yielded with the resume function.
+```lua
+print(coroutine.running()) -- thread : hexadecimal address
+```
+`coroutine.yield` yields the current thread that yield was called from. The coroutine's callback's parameters will be overwritten by the values put in the next resume after yielding a coroutine. Yielding coroutines is similar to return in a coroutine in the sense that the values returned will be the thread's results.
+```lua
+local co = coroutine.create(function(x)
+    coroutine.yield(x * 2)
+
+    return x * 2
+end)
+
+local y = coroutine.resume(co, 2)
+print(y, coroutine.resume(co, y)) -- 4, 8
+```
+The difference between yielding and returning in a coroutine is that the latter will kill the coroutine while the former while just put it in a suspended status which is the original status.
+
+You could learn more about coroutines both in the [API](https://developer.roblox.com/en-us/api-reference/lua-docs/coroutine) which includes the list of statuses and what they mean and chapters [2.11](https://www.lua.org/manual/5.1/manual.html#2.11) and [5.2](https://www.lua.org/manual/5.1/manual.html#5.2) of the 5.1 manual.
+
 ### 7.0 Modules
 
-Waiting to be documented
+Are like the holy grail of organization and ergonomical scripting. Not using modules can sometimes get atrocious.
