@@ -1092,11 +1092,11 @@ The difference between those 2 is that one creates a coroutine and then resumes 
 Coroutines have *states* as well. When they're `dead`, they can no longer be called. You can get a coroutine's state via `coroutine.status` which returns a string defining their status. Lua 5.4 also has a coroutine.close function, sadly Luau is mainly revolved around 5.1 and has some 5.3 features.
 
 ![](https://cdn.discordapp.com/attachments/451820214187720716/797704172677365760/unknown.png)
-`coroutine.running` returns the current thread that running was called from that can be resumed when yielded with the resume function.
+`coroutine.running` returns the current thread that running was called from that can be resumed with `resume` when yielded.
 ```lua
 print(coroutine.running()) -- thread : hexadecimal address
 ```
-`coroutine.yield` yields the current thread that yield was called from. The coroutine's callback's parameters will be overwritten by the values put in the next resume after yielding a coroutine. Yielding coroutines is similar to return in a coroutine in the sense that the values returned will be the thread's results.
+`coroutine.yield` yields the current thread that yield was called from. The coroutine's callback's parameters will be overwritten by the values put in the next resume after yielding a coroutine. Resuming the yielded coroutine will also continue where it was previously yielded at. Yielding coroutines is similar to return in a coroutine in the sense that the values returned will be the thread's results.
 ```lua
 local co = coroutine.create(function(x)
     coroutine.yield(x * 2)
@@ -1107,10 +1107,46 @@ end)
 local y = coroutine.resume(co, 2)
 print(y, coroutine.resume(co, y)) -- 4, 8
 ```
-The difference between yielding and returning in a coroutine is that the latter will kill the coroutine while the former while just put it in a suspended status which is the original status.
+The difference between yielding and returning in a coroutine is that the latter will kill the coroutine while the former while just put it in a suspended status which is the original status upon creation.
 
 You could learn more about coroutines both in the [API](https://developer.roblox.com/en-us/api-reference/lua-docs/coroutine) which includes the list of statuses and what they mean and chapters [2.11](https://www.lua.org/manual/5.1/manual.html#2.11) and [5.2](https://www.lua.org/manual/5.1/manual.html#5.2) of the 5.1 manual.
 
-### 7.0 Modules
+### 7.1 Modules
 
-Are like the holy grail of organization and ergonomical scripting. Not using modules can sometimes get atrocious.
+Modules are like the holy grail of organization and ergonomical scripting.
+
+![](https://cdn.discordapp.com/attachments/781886987366957058/798231018850877450/unknown.png)
+Not using modules can get atrocious(horrendous) in many different ways. It'll harm the DRY principle which will eventually lead to degraded performance, will lead to unnecessary resources getting used like threads, instances, etc. Using modules is advantageous because it is much more scalable and can be edited way easier than having to edit tons of scripts to change every time you make a change.
+
+To use a module and access its contents, it needs to be required by other code. So insert a module inside a regular script.
+
+![](https://media.discordapp.net/attachments/451820214187720716/798232834514616330/unknown.png)
+
+You will see once you open the module that, it creates a table and returns it. 
+
+![](https://cdn.discordapp.com/attachments/451820214187720716/798233217919746098/unknown.png)
+
+That is the accessible "content" I was referring to. To get the returned value and run the module, you will use the `require` function. The code in the module will only run once and will cache the results for the next times that the module will get required. In the server script, write
+```lua
+local module = require(script.ModuleScript) -- assuming that our module is called ModuleScript and is parented to script
+print(module, require(script.ModuleScript)) -- requiring it twice to prove that the module's code will run once and cache its results   
+
+print(module.key)
+```
+The module
+```lua
+print("module is running")
+
+return { -- enables Lua JIT optimizations
+    key = "value"
+}
+```
+Output should be
+```
+module is running
+
+table : hexadecimal address table : hexadecimal address
+
+value
+```
+Modules can return only 1 value, if you return none or more than 1 then it would error. Returning tables is usually ideal that way you can store multiple values in that one table. You can store functions in tables so you can use that to your advantage to allow minimal amounts of repeating. If you're only using one function, just return the function itself.
