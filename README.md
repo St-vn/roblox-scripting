@@ -70,7 +70,7 @@ Operands are the "arguments" that the operator performs an operation on, 0 * 5's
 
 ### 1.3 Variables
 
-Variables, unlike in algebra are defined by you. You use variables to avoid repeat the same tasks to get the same values.
+Variables, unlike in algebra are declared by you. You use variables to avoid repeat the same tasks to get the same values.
 ```lua
 local variable = "hi"
 print(variable) -- hi
