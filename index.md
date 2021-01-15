@@ -97,6 +97,68 @@ print(hi) -- aaahi
 ```
 
 
+### 1.4 Scopes and variable visibility
+
+Scopes are pieces of code that execute more code. They can be denoted by the `end` keyword most of the time.
+```lua
+do
+    -- code
+end
+
+if true then
+    -- code
+end
+
+-- etc
+```
+They aren't limited to `end`, `repeat until` is also a scope.
+```lua
+repeat
+    -- code
+until true
+```
+Variable visibility can vary depending on the which part of the code is currently being executed. When you declare a variable inside of a scope, you wont be able to access it outside of it.
+```lua
+do
+    local bobuxCount = 50
+    print(bobuxCount) -- 50
+end
+
+print(bobuxCount) -- nil
+```
+This doesn't apply to global variables which are accessible everywhere within that same script.
+```
+do
+    bobuxDebt = 100
+end
+
+print(bobuxDebt) -- 100
+```
+When you define a scope inside of another scope, it will inherit its environment which includes the variables. Variables in newly defined scopes are called upvalues.
+```
+local hi = 100
+
+do
+    hi += 1 -- hi is an upvalue
+end
+
+print(hi) -- 101, upvalues can get redefined
+```
+When declaring a local variable in a nested scope with the same name as an upvalue, the variable will only be limited to said scope.
+```lua
+local name = "Bob"
+
+do
+    print(name) -- Bob, is an upvalue
+
+    local name = "Joe"
+    print(name) -- Joe
+end
+
+print(name) -- Bob
+```
+
+
 ### 2.0 Making your first script and basic properties.
 
 Now that you know about that, you're able to make your first script. Insert a script in the ServerScriptService. click the Plus button on the right when hovering over the SSS and insert a script.
