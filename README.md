@@ -504,13 +504,13 @@ print(tubl[1]) -- 3
 ```
 Defining the values in a table when creating it is better than after table creations because of Luau optimizations. Therefore
 ```lua
-local tubl = {true, "hello"}
+local tubl = {Hello = true, world = "hello"}
 ```
 is better than
 ```lua
 local tubl = {}
-tubl[1] = true
-tubl[2] = "hello"
+tubl.Hello = true
+tubl.world = "hello"
 ```
 ![](https://cdn.discordapp.com/attachments/781886987366957058/797339910650200064/unknown.png)
 
@@ -607,37 +607,18 @@ You can do the same with instances except you have to be more careful because it
 
 ### 5.3 Iterating through tables
 
-So tables are great, you can do lots of stuff with them. Too bad you can't loop through them, oh wait you can. You would even utilize the `for` keyword. There are different ways to do so.
+So tables are great, you can do lots of stuff with them. Too bad you can't loop through them, oh wait you can. You will even utilize the `for` keyword to do so. You will have to use specific functions though.
 
-One of them is `pairs` it's the most famous one actually. It can be used to loop through any kinds of tables including mixed tables which isn't recommended to use(because it Lua doesn't have a lot of support for it and not to mention the fact that other languages don't support it at all).
+`next` gets the next pair(key, value) from a table.
 ```lua
-local array = {1, true, "ewqwsd"}
-local dictionary = {
+local table = {
     hello = "world",
-    you = "are fat"
-    invisible = nil
+    bruh = "moment"
 }
 
-for i, v in pairs(array) do
-    print(i, v) -- i represents the index or key and v represents the value
-end
-
-for k, v in pairs(dictionary) do -- the invisible key would get ignored because it is nil
-    print(k, v) -- the term key is used in dictionaries
-end
+print(next(table, "hello")) -- bruh moment
 ```
-
-Side note : pairs loop through array elements before dictionary ones if it looping through a mixed table.
-
-`ipairs` is used for properly organized arrays only and wouldn't run mixed tables, etc
-```lua
-local array = {1, true, "a", nil, 50} -- nil and 50 wouldnt get printed
-
-for i, v in ipairs(array) do
-    print(i, v)
-end
-```
-`next` is like pairs but slower, pairs uses next internally though. The syntax is a teensy bit different.
+So to loop through a table, you can use `next` this way.
 ```lua
 local array = {1, true, "ewqwsd"}
 local dictionary = {
@@ -654,19 +635,36 @@ for k, v in next, dictionary do
     print(k, v)
 end
 ```
-**Note : next's speed is linear while ipairs and pairs aren't, that's because ipairs and pairs have "optimizations" based on their arguments which make them faster than next. Also because next only goes to the next value in a table, nothing else.**
+It works because `next` will get called each iteration and return the pair until there is nothing to return.
 
-`next` can also be used to get the next element in a table from a key, hence the name next.
+`pairs` is the most commonly used one. Upon calling `pairs`, it will return `next` and the table argument just like how you would use next. It can be used to loop through any kinds of tables including mixed tables which isn't recommended to use(because it Lua doesn't have a lot of support for it and not to mention the fact that other languages don't support it at all).
 ```lua
-local table = {
+local array = {1, true, "ewqwsd"}
+local dictionary = {
     hello = "world",
-    bruh = "moment"
+    you = "are fat"
+    invisible = nil
 }
 
-print(next(table, "hello")) -- bruh moment
-```
-I don't want to get too far into factory iterators and stuff though, those are some more advanced concepts. So that would be enough for iterators for now.
+for i, v in pairs(array) do
+    print(i, v) -- i represents the index or key and v represents the value
+end
 
+for k, v in pairs(dictionary) do -- the invisible key would get ignored because it is nil
+    print(k, v) -- the term key is used in dictionaries
+end
+```
+Side note : pairs loop through array elements before dictionary ones if it looping through a mixed table.
+
+`ipairs` is used for sequential arrays only and wouldn't iterate any key that isn't sequentially ordered.
+```lua
+local array = {1, true, "a", nil, 50} -- nil and 50 wouldnt get printed
+
+for i, v in ipairs(array) do
+    print(i, v)
+end
+```
+you can learn more about iterators through this [link](https://www.lua.org/pil/7.html)
 
 ### 5.4 Table library
 
@@ -707,7 +705,7 @@ The table library is useful because it would allow you to have more control over
     If you inserted it at an existing entry, it would shift the other elements instead of overwriting it like `tubl[i] = v` does.
     ```lua
     local tubl = {5, true, {}, "hi"}
-    table.insert(tubl, 2, false) -- instead of using the position as the 2nd arg you would use the value you want to insert, works like stack push
+    table.insert(tubl, 2, false)
 
     print(tubl[2], tubl[3], tubl[4]) -- false, true, table : hexadecimal
     ```
@@ -726,7 +724,13 @@ The table library is useful because it would allow you to have more control over
     ```
 
 4. table.find
-    This would perform a linear search algorithm(rudimentary iterating) and return the specified value's index if the value was found, if not then it returns nil. You also have the ability to specify a starting point.
+    This would perform a linear search (table is iterated until a match) and return the specified value's index if the value was found, if not then it returns nil. You also have the ability to specify a starting point.
+
+    ```lua
+    local tubl = {true, false, 5}
+    print(table.find(tubl, 5)) -- 3
+    print(table.find(tubl, true, 2)) -- nil
+    ```
 
 5. table.move
     When too lazy to document this function   
@@ -781,7 +785,7 @@ print(game.Players.LocalPlayer) -- local player name
 -- Server
 print(game.Players.LocalPlayer) -- nil
 ```
-The player service provides both server and client sided use. It detects player joining/leaving, can make the localplayer chat, report, etc. Instances have methods such as GetChildren and events like ChildAdded and ChildRemoved. The player service has its own events and methods that are optimized for handling player related tasks like saving data.
+The player service provides both server and client sided use. It detects player joining/leaving, can make the localplayer chat, report, etc. Instances have methods such as GetChildren and events like ChildAdded and ChildRemoved while the player service has its own versions.
 ```lua
 local playerService = game.Players
 
@@ -815,18 +819,18 @@ I've explained how a signal's :Wait() method and logical operators work before. 
 
 ### 6.1 Server and client
 
-Servers and clients are network stuff. The server being Roblox's servers and client being the user. The time it takes for the server and client to communicate is called the client's ping. This varies with the user's wifi speed and their distance between the server, a European playing in an Asian server would lead to larger pings due to the distance. Inputs like pressing a key, clicking a mouse button, etc are handled within the client. While handling databases would be server sided.
+Servers and clients are network stuff. The server being Roblox's servers and client being the user. The time it takes for the server and client to communicate is called the client's ping. This varies with the user's connection speed and their distance between the server, a European playing in an Asian server would lead to larger pings due to the distance. Inputs like pressing a key, clicking a mouse button, etc are handled within the client. While handling databases would be server sided.
 
 In Roblox, clients are marked as blue while the server is green. While play testing you can switch between the client and server by clicking on the upper half of the screen.
 
 ![](https://cdn.discordapp.com/attachments/730438914401370112/794301299189350441/unknown.png)
 
-If you changed something from the client, generally it wont replicate to the server(or to other clients) but something that happens to the server would replicate to the clients. To make changes on the server while being on the client, you would use remotes. Remotes are the only communication method between clients and servers we have here on Roblox.
+If you changed something from the client, it will not replicate unless the server entrusts that kind of change but something that happens to the server would replicate to the clients. To make changes on the server while being on the client, you would use remotes. Remotes are the only communication method between clients and servers we have here on Roblox.
 
 
 ### 6.1.5 RemoteEvent and RemoteFunction
 
-Those were the remotes I was referring to last chapter. You send data to where you want and let the other side handle it. Let's start with RemoteEvents. RemoteEvents are used a lot more than their function counterpart because they're signal based and wont yield the caller's thread. They use the term fire in their methods.
+Those were the remotes I was referring to last chapter. You send data to where you want and let the other side handle it. Let's start with RemoteEvents. RemoteEvents are used a lot more than their function counterpart because they're signal based and wont yield the caller's thread. They use the term fire in their methods. Remotes requests will coalesce at least 2 network cycles (every couple frames if the server is at 60fps).
 ```lua
 -- Client
 local remote = pathToRemote
@@ -845,7 +849,7 @@ end)
 
 remote:FireServer() -- error
 ```
-It is a good idea to send data through remotes to perform tasks with more efficiency instead of using a hacky solution. You can do the same with the server and fire clients.
+It is a good idea to send data through remotes to perform tasks with more efficiency instead of using a hacky solution. You can do the same with the server and fire clients. 
 ```lua
 -- Server
 
@@ -890,7 +894,9 @@ You can try returning values using RemoteEvents, it wont work. I don't find a lo
 
 ### 6.2 Network Ownership
 
-Network Ownership is something that parts have. It is used to prevent input delays and such, an example would be when a player pushes a part. There wouldn't be delay because the player has network ownership over that part. Unanchored parts' network owner can change and needs to be in a player's range to be have that player as their network owner. That range varies a lot. Yes, network owners can only be set on unanchored parts. When a client has network ownership over a part, any physical changes on their side would replicate to the server. That also means that exploiters can destroy part based hitboxes. To prevent that you could manually set a part's network owner to nil(server).
+Network Ownership is something that parts have. It is used to prevent input delays and such, an example would be when a player pushes a part. There wouldn't be a delay for the player at all, since it's happening completely locally, but for other clients and the server network cycles must be waited through before the request is utilized.
+
+Unanchored parts' network owner can change and needs to be in a player's range to be have that player as their network owner. That range varies a lot. Yes, network owners can only be set on unanchored parts. When a client has network ownership over a part, any physical changes on their side would replicate to the server. That also means that exploiters can destroy part based hitboxes. To prevent that you could manually set a part's network owner to nil(server).
 ```lua
 Part:SetNetworkOwner(nil)
 ```
@@ -904,13 +910,13 @@ end
 
 ### 6.3 Exploiters, Honeypots and securing your game
 
-Exploiters, dependending on their competency and the anti-cheat's level, can get stopped easily by rudimentary sanity checks or can completely obliterate a game with ineffective anti-cheat like arsenal. You can easily break a simulator made by an incompetent scripter, just spam fire remotes that would likely increment the main currency and get stacked. To prevent that you could check the time elapsed since the previous click hence sanity checks.
+Exploiters, dependending on their competency and the anti-cheat's level, can get stopped easily by rudimentary sanity checks or can completely obliterate a game with ineffective anti-cheat like arsenal or even worse, they can get bypass secure games and do some bad stuff. You can easily break a simulator made by an incompetent scripter, just spam fire remotes that would likely increment the main currency and get stacked. To prevent that you could check the time elapsed since the previous click hence sanity checks.
 
 Since exploiters have **full control** of their client, they would try to find something to cause chaos within a game. Since client sided changes almost never change you wont have to worry about how a client's UI looks like, that is their problem. So you should just prevent anything that could potentially become a nuisance to other players' fun like gaining infinite amounts of currency or aimbots.
 
 To prevent currency giving remotes from getting spammed, you just don't use them, try using stuff like tools and detect the clicks from the server side and add a fake remote to perhaps punish the exploiter which is what a **honeypot** is. To prevent aimbots that shoot across walls, you could fire server sided rays to make sure that it isn't shooting across walls, of course this would be less effective in an open field therefore you should perhaps add a **cooldown** to see if they're firing too fast. For movement, there would be a problem being that a player could randomly get flung because of glitches and punishing someone over an **unintentional glitch** isn't very ideal either. So instead, you could **rubberband** the player to their previous location if they move too far.
 
-**However it's important to note that stopping competent exploiters is unbelievably harder than stopping skids(script kiddie).**
+**However it's important to note that stopping adept exploiters is unbelievably harder than stopping skids(script kiddie).**
 
 
 ### 6.4 Handling inputs with UserInputService, ContextActionService and the Mouse object
