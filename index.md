@@ -1156,3 +1156,6 @@ table : hexadecimal address table : hexadecimal address
 value
 ```
 Modules can return only 1 value, if you return none or more than 1 then it would error. Returning tables is usually ideal that way you can store multiple values in that one table. You can store functions in tables so you can use that to your advantage to allow minimal amounts of repeating. If you're only using one function, just return the function itself.
+
+
+### 7.2 References and garbage collection
