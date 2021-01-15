@@ -1159,3 +1159,5 @@ Modules can return only 1 value, if you return none or more than 1 then it would
 
 
 ### 7.2 References and garbage collection
+
+Waiting to be documented
