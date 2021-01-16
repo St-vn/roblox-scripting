@@ -117,7 +117,7 @@ repeat
     -- code
 until true
 ```
-Variable visibility can vary depending on the which part of the code is currently being executed. When you declare a variable inside of a scope, you wont be able to access it outside of it.
+Variable visibility can vary depending on the which part of the code is currently being executed. When you declare a variable inside of a scope, you wont be able to access it when you're in that scope.
 ```lua
 do
     local bobuxCount = 50
