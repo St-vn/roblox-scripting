@@ -391,7 +391,7 @@ for i = 1, 10 do
     print(i)
 end
 ```
-Note that continue is a Luau and not a Lua keyword. These keywords work with loops only.
+Note that continue is a Luau and not a Lua keyword. These keywords work with loops only. It's also worth noting that `break`, `continue` and `return`(See 4.2) should be the last statement within the block otherwise it would error.
 
 
 ### 4.0 Functions
@@ -485,7 +485,6 @@ What they return should be self explanatory since I've just show an example of h
 math.clamp(5 + 5, 1, 7) -- returns the x if it's within the min and max, if it isn't then it would return either the min or max.
 math.clamp(2) -- error
 ```
-
 
 ### 4.3 Parameters and ... in Lua
 
