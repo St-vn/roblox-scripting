@@ -97,9 +97,9 @@ print(hi) -- aaahi
 ```
 
 
-### 1.4 Scopes and variable visibility
+### 1.4 Scopes and Blocks
 
-Scopes are pieces of code that execute more code. They can be denoted by the `end` keyword most of the time.
+Blocks are part of the source code that contain at least one declaration and statement. They can usually be denoted by the `end` keyword.
 ```lua
 do
     -- code
@@ -117,7 +117,7 @@ repeat
     -- code
 until true
 ```
-Variable visibility can vary depending on the which part of the code is currently being executed. When you declare a variable inside of a scope, you wont be able to access it when you're in that scope.
+Variables' scope define in which part of the script it is valid, a variable's scope varies depending on which block it is located at. When you declare a variable inside of a block, you wont be able to access outside of its scope.
 ```lua
 do
     local bobuxCount = 50
@@ -134,17 +134,17 @@ end
 
 print(bobuxDebt) -- 100
 ```
-When you define a scope inside of another scope, it will inherit its environment which includes the variables. Variables in newly defined scopes are called upvalues.
+When you define a block inside of another block, it will inherit its environment which includes the variables. Variables in newly defined scopes are called upvalues.
 ```
 local hi = 100
 
 do
-    hi += 1 -- hi is an upvalue
+    hi = 50 -- hi is an upvalue
 end
 
-print(hi) -- 101, upvalues can get redefined
+print(hi) -- 50, upvalues can get redefined within a nested block
 ```
-When declaring a local variable in a nested scope with the same name as an upvalue, the variable will only be limited to said scope.
+When declaring a local variable in a nested block with the same name as an upvalue, the variable will only be limited to said scope.
 ```lua
 local name = "Bob"
 
