@@ -134,7 +134,7 @@ end
 
 print(bobuxDebt) -- 100
 ```
-When you define a block inside of another block, it will inherit its environment which includes the variables. Variables in newly defined scopes are called upvalues.
+When you define a block inside of another block, it will inherit its environment(see 7.4, if you don't get it, it's fine it is more important to understand later on    ) which includes the variables. Variables in newly defined scopes are called upvalues.
 ```
 local hi = 100
 
@@ -272,18 +272,20 @@ end
 ```
 
 
-### 3.1 Conditions, relational and logical operators
+### 3.1 Introduction to control structures
 
-Before you learn about how to use conditional loops you would need to understand how conditions work. Conditions would either return true or false after the series of operations have been made. You would use specific operators to perform conditional operations and such.
+Control structures are blocks of code that will examine the given values and execute tasks according to the examination. They are if(elseif, else), while and repeat statements.
+
+It is worth learning how to manipulate conditions and such before diving straight to control structures. Conditions would either return true or false after a series of operations have been made. This is how you can know whether a value is equal to another
 ```lua
-print(workspace.Baseplate.Name == "Baseplate") -- true, checks if the baseplate's name is equal to "Baseplate". also Lua is case sensitive ;)
+print(workspace.Baseplate.Name == "Baseplate") -- true, also Lua is case sensitive ;)
 ```
-The one operator above is a relational operator, its opposite ~=, is a relational operator as well.
+The operator above is a relational operator, its opposite ~=, is a relational operator as well.
 ```lua
 print(workspace.Baseplate.Name ~= "bruh moment") -- true, Baseplate's name is indeed not equal to bruh moment
 ```
 the other ones, are pretty self-explanatory : `>, <, >=, <=`, >= being is greater than or equal to.
-Whenever using those operators, a boolean would be returned as the operations' results. You could manipulate those results to get other results by using logical operators aka : `not, or, and`.
+Whenever using those operators, a boolean would be returned as the operations' results. You could manipulate those results to get new results by using logical operators aka : `not, or, and`.
 
 `not` negates a bool value, `or` checks if the preceding condition was false and returns the succeeding one. `and` checks for the preceding value and then return the succeeding one regardless of what it is.
 ```lua
@@ -300,7 +302,7 @@ This works that way because `nil` is considered as a faulty value by Lua. But it
 print(false == nil) -- false
 print(false == not not nil) -- would negate nil, a faulty value to true and negate it again.
 ```
-That works the same with valid values like numbers and strings.
+Every value that isn't nil or false is considered as valid/truthy.
 ```lua
 print(not 1) -- false
 print(1 == true) -- false
@@ -318,10 +320,9 @@ Precedence of operators is worth taking a look at, Source : Lua 5.1 docs.
 
 ![](https://cdn.discordapp.com/attachments/781561020018851850/781632597776007178/unknown.png)
 
+### 3.2 if, elseif and else statements
 
-### 3.2 if statements, elseif and else
-
-Now that you know how conditions work, you're gonna learn how to execute tasks depending on the condition. If statements are used to check conditions and then run the statement in it if the condition was true/valid.
+If statements are used to check conditions and then run the statement in it if the condition was true/valid.
 ```lua
 if true then -- the condition is `true` so it would run
     print("hello there")
@@ -537,7 +538,7 @@ Heartbeat fires every frame and you would learn about RunService later on.
 
 ### 5.0 Tables
 
-Tables are a datatype that I've mentioned before in here. They are used to store multiple values in them including other tables. They are pretty different compared to datatypes like numbers, bools, etc. The reason being is that they exist as objects in memory which is the reason that they have a hexedecimal address to differenciate them, I will elaborate later in this chapter. To create a table you would use these brackets {}.
+Tables are a datatype that I've mentioned before in here. They are used to store multiple values in them including other tables. They are pretty different compared to datatypes like numbers, bools, etc. The reason being is that they exist as objects in memory which is the reason that they have a hexedecimal address to differenciate them just like functions, userdata(Instances, Vectors) and threads. I will elaborate that later this chapter. To create a table you would use these brackets {}.
 ```lua
 local tubl = {}
 ```
@@ -577,7 +578,7 @@ tubl.world = "hello"
 
 [actual sauce](https://roblox.github.io/luau/performance.html)
 
-As I said at the beginning of this chapter, tables are their own individual objects in memory, meaning if you have multiple references to a table and made a change to one of them, it would apply those changes to all the other ones.
+As I said at the beginning of this chapter, tables are their own individual objects stored in memory, meaning if you have multiple references to a table and made a change to one of them, it would apply those changes to all the other ones.
 ```lua
 local tubl = {}
 local tabl = tubl
@@ -1176,6 +1177,8 @@ print(y, coroutine.resume(co, y)) -- 4, 8
 ```
 The difference between yielding and returning in a coroutine is that the latter will kill the coroutine while the former while just put it in a suspended status which is the original status upon creation.
 
+![Parallel Luau](https://devforum.roblox.com/t/parallel-luau-developer-preview/925304) allows true multi-threading in Roblox but is still in Developer Preview.
+
 You could learn more about coroutines both in the [API](https://developer.roblox.com/en-us/api-reference/lua-docs/coroutine) which includes the list of statuses and what they mean and chapters [2.11](https://www.lua.org/manual/5.1/manual.html#2.11) and [5.2](https://www.lua.org/manual/5.1/manual.html#5.2) of the 5.1 manual.
 
 ### 7.1 Modules
@@ -1216,9 +1219,84 @@ table : hexadecimal address table : hexadecimal address
 
 value
 ```
-Modules can return only 1 value, if you return none or more than 1 then it would error. Returning tables is usually ideal that way you can store multiple values in that one table. You can store functions in tables so you can use that to your advantage to allow minimal amounts of repeating. If you're only using one function, just return the function itself.
+Modules can return only 1 value, not more nor less. Returning tables is ideal because you can store multiple values in that one table. You can store functions in tables so you can use that to your advantage to reuse it and be a DRY cool kid. If you're only using one function, just return the function itself.
 
 
-### 7.2 References and garbage collection
+### 7.2 Metatables
+
+Metatables are just regular tables but with more use to them. Metamethods are like events within the table that would get invoked upon interacting with it. To create a metatable, you use the `setmetatable` function, you will need a regular table and a metatable(with metamethods) to "attach" it to the regular one.
+```lua
+local meta = {bruh = "moment"}
+meta.__index = meta
+
+print(setmetatable({}, meta).bruh) -- moment, you can set the index metamethod to a given table as a pointer for each index and return the value
+```
+Lua strings are also table based, which is the reason that you can index them.
+```lua
+local str = "hi"
+print(str.bobuxman) -- nil
+```
+They have functions in them because they inherit the string library's functions as methods.
+```lua
+local str = "hi"
+print(str.lower) -- function : hexadecimal address
+print(str:upper()) -- HI
+```
+String methods are slower than using the library and passing the string values themselves though.
+![](https://media.discordapp.net/attachments/451820214187720716/800785925973475428/unknown.png)
+
+If you tried defining a pair in a string, it will error. This behavior can be made with the `__newindex` metamethod.
+```lua
+local stringObj = {
+    __newindex = function()
+        error("attempt to index a string value")
+    end
+}
+
+local newString = setmetatable({}, stringObj)
+
+print(newString.Hi) -- nil
+newString.Hi = true -- error : attempt to index a string value
+```
+You can see about more metamethods in Lua through this [link](https://www.lua.org/manual/5.1/manual.html#2.8) or the [ones](https://developer.roblox.com/en-us/articles/Metatables) usable in Roblox. Prototype OOP is possible in Lua with metatables(see 7.5)
+
+
+### 7.3 References and garbage collection
+
+As mentioned in chapter 5.0, there are values that get stored in memory as their own individuals and can have references via variable, table pair element, parameter, etc. Simpler datatypes like strings, numbers and bools get cloned when you cache them instead of giving a reference to it.
+
+Unused data will get garbage collected at a certain frequency(every task scheduler refresh)
+![](https://cdn.discordapp.com/attachments/451820214187720716/800779464942026752/unknown.png)
+
+Values get garbage collected when their references are weak. This applies to any kind of value, including objects. Thus when an object has no strong references to it, it'll get gc'd. Tables can be weak as well, their elements need to have weak references. You can control table elements' weakness via the `__mode` metamethod, set it to "k" for the key to be weak, v for value and kv for the whole pair. When either the key or value gets gc'd, the whole pair will get removed from the table.
+
+If values are not garbage collected properly, memory leak(degradation of performance) will occur. Memory leak is usually caused by unnecessarily connecting functions and not disconnecting them. Luckily Roblox made the Destroy function that Instances inherit that disconnects events and makes it gc'able assuming that it has no strong references to it.
+```lua
+while wait() do
+    game:GetService("RunService").Heartbeat:Connect(function() -- you can say bye to performance with this script, heartbeat runs every frame so imagine connecting to an event that runs every frame every 1/30, bye bye performance ;)
+
+    end)
+end
+```
+The events will keep getting fired until disconnected. If it was connected in a block, then it wont allow the block to gc until its disconnection which can get problematic for the other values that need to get gc'd.
+
+There's a function in Lua that can manipulate garbage collection called `collectgarbage`.
+![](https://cdn.discordapp.com/attachments/451820214187720716/800925938720178196/unknown.png)
+
+The problem with it is that you can only use the opt "count" in Roblox because of sandboxing reasons. It has also been deprecated and replaced by `gcinfo` which is a bit less accurate. Garbage collection in Luau hasn't been documented yet though.
+
+Since I only cover topics relevant in Luau, you will have to read more in the [Lua manual](https://www.lua.org/manual/5.1/manual.html#2.10) to learn more about garbage collection in Lua.
+
+### 7.4 Environments
 
 Waiting to be documented
+
+
+### 7.5 OOP, classes and objects
+
+Object-oriented programming is a programming paradigm(style) that makes data based on classes and objects hence the term object-oriented. Instead of relying on functions and such, each object inherits `methods` and properties from its class. A ubiquitous example of OOP being used is with vehicles; there is a vehicle class and car inherits its properties while having their own and so on. I will be using an example that is present in Roblox.
+![](https://cdn.discordapp.com/attachments/451820214187720716/801177235817234432/unknown.png)
+
+As you can see a lot of 3D instance classes inherit from PVInstance which includes Models. `Terrain` inherits from `BasePart` which is the reason that it has the `Touched` event. Seats are parts but with the ability to seat humanoids.
+
+One of the 4 OOP pillars, `Inheritance` has just been explained. Another would be `Abstraction` which is hiding the underlying process of a task being done. This is why objects have methods, to hide the process of stuff happening. BaseParts have a mass property, it can be retrieved by using the :GetMass() method, which gets BasePart.Mass, a readonly property that describes a BasePart's mass.
