@@ -1299,4 +1299,18 @@ Object-oriented programming is a programming paradigm(style) that makes data bas
 
 As you can see a lot of 3D instance classes inherit from PVInstance which includes Models. `Terrain` inherits from `BasePart` which is the reason that it has the `Touched` event. Seats are parts but with the ability to seat humanoids.
 
-One of the 4 OOP pillars, `Inheritance` has just been explained. Another would be `Abstraction` which is hiding the underlying process of a task being done. This is why objects have methods, to hide the process of stuff happening. BaseParts have a mass property, it can be retrieved by using the :GetMass() method, which gets BasePart.Mass, a readonly property that describes a BasePart's mass.
+One of the 4 OOP pillars, `Inheritance` has just been explained. Another would be `Abstraction` which is hiding the underlying process of a task being done. This is one of the reasons that objects have methods, to hide the process of stuff happening. An example would be the `Destroy` method that `Instance`s have. It parents the part to nil, disconnects its functions and allows it to get gc'd. You can say that the deprecated `Remove` is an abstracted version of manually parenting to nil.
+```lua
+local part = workspace.Part
+part:Remove()
+
+print(part.Parent) -- nil
+part.Parent = workspace -- no error
+
+part:Destroy()
+
+print(part.Parent) -- nil
+part.Parent = workspace -- error : The Parent property of Part is locked, current parent: NULL, new parent Workspace
+```
+
+Anyways, back to pillars. The 3rd pillar is encapsulation, which is hiding data to users and allow it to be manipulated only via methods. A common example would be setters/getters, `BasePart`s have network owners and they can only be accessed via their setter/getters methods(see 6.2).
