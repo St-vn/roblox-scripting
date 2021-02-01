@@ -1294,7 +1294,9 @@ Waiting to be documented
 
 ### 7.5 OOP, classes and objects
 
-Object-oriented programming is a programming paradigm(style) that makes data based on classes and objects hence the term object-oriented. Instead of relying on functions and such, each object inherits `methods` and properties from its class. A ubiquitous example of OOP being used is with vehicles; there is a vehicle class and car inherits its properties while having their own and so on. I will be using an example that is present in Roblox.
+Lua supports multiple programming paradigms(style), but it is mostly procedural. Although I find OOP extraneous in most cases in Lua(u), understanding its concepts would be useful to understand because it is quite popular in the Roblox scripting community.
+
+Object-oriented programming is a programming paradigm that makes data based on classes and objects hence the term object-oriented. Instead of relying on functions and such, each object inherits `methods` and properties from its class. A ubiquitous example of OOP being used is with vehicles; there is a vehicle class and car inherits its properties while having their own and so on. I will be using an example that is present in Roblox.
 ![](https://cdn.discordapp.com/attachments/451820214187720716/801177235817234432/unknown.png)
 
 As you can see a lot of 3D instance classes inherit from PVInstance which includes Models. `Terrain` inherits from `BasePart` which is the reason that it has the `Touched` event. Seats are parts but with the ability to seat humanoids.
@@ -1313,4 +1315,13 @@ print(part.Parent) -- nil
 part.Parent = workspace -- error : The Parent property of Part is locked, current parent: NULL, new parent Workspace
 ```
 
-Anyways, back to pillars. The 3rd pillar is encapsulation, which is hiding data to users and allow it to be manipulated only via methods. A common example would be setters/getters, `BasePart`s have network owners and they can only be accessed via their setter/getters methods(see 6.2).
+Anyways, back to pillars. The 3rd pillar is encapsulation, which is hiding data to users and allow it to be manipulated only via methods. A common example would be setters/getters, Instances have attributes and they can only be manipulated via their setter/getters.
+![](https://media.discordapp.net/attachments/805224269385564211/805896293129650266/unknown.png)
+
+The 4th and last pillar is known as polymorphism, it describes the concept that different classes can be used with the same interface [source](https://stackify.com/oop-concept-polymorphism/). The image below shows an accurate representation of how polymorphism would work with animal classes.
+![](https://i2.wp.com/www.brightdevelopers.com/wp-content/uploads/2017/08/polymorphism-big.png?ssl=1)
+
+Before I move onto how OOP would work practically, I want to present an old [signal class](https://pastebin.com/P4C3X7KV) module of mine I made back in november of 2020 meant to imitate RBXScriptSignals' functionality to give an example of how OOP looks like in Lua.
+
+
+### 7.5.5 Practical OOP
