@@ -1325,3 +1325,5 @@ Before I move onto how OOP would work practically, I want to present an old [sig
 
 
 ### 7.5.5 Practical OOP
+
+Waiting to be documented
